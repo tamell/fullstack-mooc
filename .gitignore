@@ -1,0 +1,10 @@
+/part1/anecdotes/node_modules
+/part1/courseinfo/node_modules
+/part1/unicafe/node_modules
+/part2/courseinfo/node_modules
+/part2/phonecontact/node_modules
+/part2/countries/node_modules
+/.vscode
+/part4/bloglist/node_modules
+/part2/phonecontact/build
+/part4/bloglist/.env
