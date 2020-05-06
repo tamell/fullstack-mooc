@@ -3,6 +3,13 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
+  }
+  return null
+}
 
 blogRouter.get('/', async (request, response) => {
   console.log('Going to find blogs')
@@ -20,8 +27,10 @@ blogRouter.get('/:id', async (request, response) => {
 })
 
 blogRouter.post('/', async (request, response) => {
+  console.log(request.body)
   const body = request.body
-  const token = request.body.authorization
+  const token = getTokenFrom(request)
+  console.log('Retrieved auth token')
   if (body.title === undefined || body.url === undefined){
     response.status(400).end()
   }
