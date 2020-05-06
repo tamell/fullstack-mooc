@@ -23,15 +23,13 @@ const errorHandler = (error, request, response, next) => {
 
   next(error)
 }
-const tokenExtractor = (request, response, next) => {
+const tokenExtractor = (request, response) => {
   const auth = request.get('authorization')
   if (auth && auth.toLowerCase().startsWith('bearer '))
   {
     return auth.substring(7)
-    next()
   }
   return null
-  next()
 }
 
 module.exports = {

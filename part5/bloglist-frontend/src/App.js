@@ -3,13 +3,6 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
-const ShowUser = ({user}) => {
-  return(
-    <>
-     {user} is logged in
-    </>
-  )
-}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -17,14 +10,20 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [token, setToken] = useState(null)
 
+  useEffect(async () => {
+    const initialBlogs = await blogService.getAll()
+    console.log(initialBlogs)
+    setBlogs(initialBlogs)
+  }, [])
   const handleLogin = async event => {
     event.preventDefault()
-    console.log(username)
     try{
       const user = await loginService.login({username, password})
       console.log('SuccessfulAwait')
-      setUser(user)
+      setUser(user.name)
+      setToken(user.token)
       setUsername('')
       setPassword('')
       console.log(user)
@@ -67,12 +66,29 @@ const App = () => {
       </>
     )
   }
+  const ShowUser = () => {
+    return(
+      <>
+       {user} is logged in
+      </>
+    )
+  }
+  const ShowBlogs = () => {
+    return(
+      <>
+       {blogs.map(blog =>
+        <Blog key={blog.id} blog={blog} />
+      )}
+      </>
+    )
+  }
   return (
     <div>
       {user != null &&<h2>blogs</h2>}
       {user === null && <h2>Log in to application</h2>}
       {user === null && LoginForm()}
-      {user !== null && ShowUser(user)}
+      {user !== null && ShowUser()}
+      {user !== null && ShowBlogs()}
     </div>
   )
 }

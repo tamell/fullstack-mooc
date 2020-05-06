@@ -5,6 +5,7 @@ const User = require('../models/user')
 userRouter.post('/', async (request, response) => {
   const body = request.body
   const saltRounds = 10
+  console.log('Started adding user...')
   if (body.password === undefined || body.password.length < 3 ){
     return response.status(200).json({ error: 'password missing or too short' })
   }else{
@@ -14,6 +15,7 @@ userRouter.post('/', async (request, response) => {
       name: body.name,
       passwordHash,
     })
+    console.log(user)
     const savedUser = await user.save()
     response.json(savedUser)
   }
