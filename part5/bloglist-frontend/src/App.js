@@ -12,17 +12,33 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
 
-  useEffect(async () => {
-    const initialBlogs = await blogService.getAll()
-    console.log(initialBlogs)
-    setBlogs(initialBlogs)
+  useEffect( () => {
+    blogService
+    .getAll()
+    .then(initialBlogs =>
+      {console.log(initialBlogs)
+        setBlogs(initialBlogs)})
+    console.log(blogs)
   }, [])
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
+
   const handleLogin = async event => {
     event.preventDefault()
     try{
       const user = await loginService.login({username, password})
-      console.log('SuccessfulAwait')
-      setUser(user.name)
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      ) 
+      console.log('Successful login')
+      console.log(blogs)
+      setUser(user)
       setToken(user.token)
       setUsername('')
       setPassword('')
@@ -34,11 +50,10 @@ const App = () => {
       }, 5000)
     }
   }
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [])
+  const handleLogout = (event) => {
+    event.preventDefault()
+    window.localStorage.removeItem('loggedBlogappUser')
+  }
   const LoginForm = () => {
     return(
     <>
@@ -69,7 +84,8 @@ const App = () => {
   const ShowUser = () => {
     return(
       <>
-       {user} is logged in
+       {user.name} is logged in
+        <button onClick={handleLogout}> logout </button>
       </>
     )
   }
@@ -88,6 +104,7 @@ const App = () => {
       {user === null && <h2>Log in to application</h2>}
       {user === null && LoginForm()}
       {user !== null && ShowUser()}
+      <p></p>
       {user !== null && ShowBlogs()}
     </div>
   )
