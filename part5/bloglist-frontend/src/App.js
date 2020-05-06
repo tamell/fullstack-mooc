@@ -57,13 +57,14 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
-  const addBlog = (event) =>{
+  const addBlog = (event) => {
+    event.preventDefault()
     const blogObject = {
       author: author,
       url: url,
-      title: title,
-      user: user
+      title: title
     }
+    console.log(blogObject)
     blogService
       .create(blogObject)
       .then(returnedBlog => {
