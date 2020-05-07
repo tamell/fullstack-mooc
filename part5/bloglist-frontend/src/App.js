@@ -1,37 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './App.css';
 
-const Notification = ({ message }) => {
-  if (message === null) {
-    return null
-  }
-  let classname = ''
-  if (message.startsWith('Error')){
-     classname = 'error'
-  }
-  else{
-     classname = 'notify'
-  }
-  return (
-    <div className={classname}>
-      {message}
-    </div>
-  )
-}
-
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
-  const [url, setUrl] = useState('')
-  const [author, setAuthor] = useState('')
-  const [title, setTitle] = useState('') 
+  
+  const blogFormRef = React.createRef()
 
   useEffect( () => {
     blogService
@@ -40,6 +24,7 @@ const App = () => {
       {console.log(initialBlogs)
         setBlogs(initialBlogs)})
   }, [])
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -79,21 +64,14 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      author: author,
-      url: url,
-      title: title
-    }
-    console.log(blogObject)
+  const addBlog = (blogObj) => {
+    console.log(blogObj)
+    blogFormRef.current.toggleVisibility()
+    console.log('Going to send blog to service')
     blogService
-      .create(blogObject)
+      .create(blogObj)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setUrl('')
-        setTitle('')
-        setAuthor('')
       })
       setErrorMessage('Added new blog')
       setTimeout(() => {
@@ -127,42 +105,11 @@ const App = () => {
       </>
     )
   }
-  const newBlogForm = () => {
-    return(
-    <>
-    <form onSubmit={addBlog}>
-          <div>
-             title:
-             <input
-                type="text" 
-                value={title}
-                name="Title"
-                onChange={({ target }) => setTitle(target.value)}
-              />
-          </div> 
-          <div>
-             author:
-             <input
-                type="text" 
-                value={author}
-                name="Author"
-                onChange={({ target }) => setAuthor(target.value)}
-              />
-          </div>
-          <div>
-             url:
-             <input
-                type="text" 
-                value={url}
-                name="URL"
-                onChange={({ target }) => setUrl(target.value)}
-              />
-          </div>
-          <button type='submit'>create</button>
-        </form>
-      </>
-    )
-  }
+  const blogForm = () => (
+    <Togglable buttonLabel='new blog' ref={blogFormRef}>
+      <BlogForm addBlogfunc={addBlog} />
+    </Togglable>
+  )
   const ShowUser = () => {
     return(
       <>
@@ -183,14 +130,14 @@ const App = () => {
   return (
     <div>
       <Notification message={errorMessage} />
-      {user != null &&<h2>blogs</h2>}
+      <h2>Blogs</h2>
       {user === null && <h2>Log in to application</h2>}
       {user === null && LoginForm()}
       {user !== null && ShowUser()}
+      {user!== null && blogForm() }
       <p></p>
+      {user != null &&<h2>List of earlier blogs</h2>}
       {user !== null && ShowBlogs()}
-      {user !== null && <h2>Save a new blog</h2>}
-      {user !== null && newBlogForm()}
     </div>
   )
 }

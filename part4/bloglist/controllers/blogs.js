@@ -30,6 +30,7 @@ blogRouter.post('/', async (request, response) => {
   const body = request.body
   const token = getTokenFrom(request)
   if (body.title === undefined || body.url === undefined){
+    console.log('Oops, missing title or url')
     response.status(400).end()
   }
   else{
