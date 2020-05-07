@@ -2,7 +2,25 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import './App.css';
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+  let classname = ''
+  if (message.startsWith('Error')){
+     classname = 'error'
+  }
+  else{
+     classname = 'notify'
+  }
+  return (
+    <div className={classname}>
+      {message}
+    </div>
+  )
+}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -40,13 +58,17 @@ const App = () => {
       ) 
       console.log('Successful login')
       console.log(blogs)
+      setErrorMessage('Successful login')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
       setUser(user)
       setToken(user.token)
       setUsername('')
       setPassword('')
       console.log(user)
     }catch(exception){
-      setErrorMessage('wrong credentials')
+      setErrorMessage('Error: wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -73,7 +95,10 @@ const App = () => {
         setTitle('')
         setAuthor('')
       })
-    console.log(blogs)
+      setErrorMessage('Added new blog')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
   }
   const LoginForm = () => {
     return(
@@ -157,6 +182,7 @@ const App = () => {
   }
   return (
     <div>
+      <Notification message={errorMessage} />
       {user != null &&<h2>blogs</h2>}
       {user === null && <h2>Log in to application</h2>}
       {user === null && LoginForm()}
