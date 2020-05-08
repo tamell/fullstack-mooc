@@ -91,6 +91,21 @@ const App = () => {
         }, 5000)
       })
   }
+  const delBlog = (blogObj) => {
+    console.log('Going to delete blog')
+    const message = `Are you sure you want to delete blog ${blogObj.title} ?`
+    const result = window.confirm(message)
+    if (result){
+    blogService
+      .deletor(blogObj.id)
+      .then(returnedBlog =>{
+        setErrorMessage('Removed a blog')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+    }
+  }
   const LoginForm = () => {
     return(
     <>
@@ -136,7 +151,7 @@ const App = () => {
     return(
       <>
        {sortedBlogs.map(blog =>
-        <Blog key={blog.id} blog={blog} putBlog={likeBlog} />
+        <Blog key={blog.id} blog={blog} putBlog={likeBlog} deleteBlog={delBlog} />
       )}
       </>
     )

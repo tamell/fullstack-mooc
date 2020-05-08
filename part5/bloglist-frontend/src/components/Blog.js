@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-const Blog = ({ blog, putBlog }) => {
+const Blog = ({ blog, putBlog, deleteBlog }) => {
   const [blogVisible, setBlogVisible] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
 
@@ -25,6 +25,10 @@ const Blog = ({ blog, putBlog }) => {
     newBlog.likes += 1
     putBlog(newBlog)
   }
+  const handleDelete = () =>{
+    console.log('Deleting blog')
+    deleteBlog(blog)
+  }
   console.log(blog)
   return(
     <>
@@ -37,7 +41,7 @@ const Blog = ({ blog, putBlog }) => {
       <button onClick={toggleVisibility}>hide</button>
       <p>{blog.url}</p>
       <p>likes {blog.likes} <button onClick={handleLike}>like</button></p>
-      <p>{blog.user.name}</p>
+      <p>{blog.user.name}<button onClick={handleDelete}>remove</button></p>
    </div>
    </>
 )}

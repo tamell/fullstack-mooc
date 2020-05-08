@@ -77,14 +77,17 @@ blogRouter.put('/:id', async (request, response) => {
 })
 
 blogRouter.delete('/:id', async (request, response) => {
-  const token = request.body.token
-  const decodedtoken = jwt.verify(request.token, process.env.SECRET)
+  const token = getTokenFrom(request)
+  console.log(token)
+  const decodedtoken = jwt.verify(token, process.env.SECRET)
+  console.log('Successfully decded decodedtoken')
   if (!token || !decodedtoken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
+  console.log('Deletion token is valid')
   const delBlog = await Blog.findById(request.params.id)
 
-  if (delBlog.author.toString() === decodedtoken.id.toString() ){
+  if (delBlog.user.toString() === decodedtoken.id.toString() ){
     await Blog.findByIdAndRemove(request.params.id)
     response.status(204).end()
   }else{
