@@ -9,6 +9,7 @@ import './App.css';
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [showBlog, setShowBlog] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -78,6 +79,18 @@ const App = () => {
         setErrorMessage(null)
       }, 5000)
   }
+  const likeBlog = (blogObj) => {
+    console.log(blogObj)
+    console.log('Going to send modified blog to service')
+    blogService
+      .putblog(blogObj)
+      .then(returnedBlog =>{
+        setErrorMessage('Liked a blog')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+  }
   const LoginForm = () => {
     return(
     <>
@@ -122,7 +135,7 @@ const App = () => {
     return(
       <>
        {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} putBlog={likeBlog} />
       )}
       </>
     )
